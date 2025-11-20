@@ -4,6 +4,7 @@
 #include "ParameterTree/ParameterNode.h"
 #include "ParameterTree/ParameterGroupNode.h"
 #include "ButtonEditDialog.h"
+#include <QCloseEvent>
 #include <QMenu>
 #include <QFileDialog>
 #include <QSettings>

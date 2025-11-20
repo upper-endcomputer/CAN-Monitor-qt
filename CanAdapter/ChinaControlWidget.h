@@ -1,5 +1,5 @@
-#ifndef SLCANCONTROLWIDGET_H
-#define SLCANCONTROLWIDGET_H
+#ifndef CHINACONTROLWIDGET_H
+#define CHINACONTROLWIDGET_H
 
 #include "CanAdapterChina.h"
 #include <QWidget>
@@ -37,4 +37,4 @@ private:
     void populateModeComboBox(QComboBox *cb);
 };
 
-#endif // SLCANCONTROLWIDGET_H
+#endif // CHINACONTROLWIDGET_H

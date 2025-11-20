@@ -1,2 +1,5 @@
 CAN-Monitor-qt.pro.user
+build/
+.vscode/
+.clang-format
 

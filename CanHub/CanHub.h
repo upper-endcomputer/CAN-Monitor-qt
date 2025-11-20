@@ -2,6 +2,7 @@
 #define CANHUB_H
 
 #include <QList>
+#include <QObject>
 #include "lib-slcan/can_message.h"
 
 class CanHub;
