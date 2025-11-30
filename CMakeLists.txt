@@ -89,7 +89,11 @@ set(PROJECT_SOURCES
 # Conditional: PCAN adapter
 if(NOT EXCLUDE_PCAN)
     message(STATUS "Including PCAN adapter (BUILD_PCAN)")
-    list(APPEND PROJECT_SOURCES CanAdapter/CanAdapterPCAN.cpp)
+    list(APPEND PROJECT_SOURCES 
+        CanAdapter/CanAdapterPCAN.cpp
+        CanAdapter/PcanControlWidget.cpp
+        CanAdapter/PcanPortComboBox.cpp
+    )
     add_compile_definitions(BUILD_PCAN)
 else()
     message(STATUS "Excluding PCAN adapter")
@@ -161,6 +165,10 @@ set(PROJECT_FORMS
     Simulator/TritiumSimulatorWindow.ui
     Cansole/CansoleIdDialog.ui
 )
+
+if(NOT EXCLUDE_PCAN)
+    list(APPEND PROJECT_FORMS CanAdapter/PcanControlWidget.ui)
+endif()
 
 # Create executable target
 add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${PROJECT_FORMS})
