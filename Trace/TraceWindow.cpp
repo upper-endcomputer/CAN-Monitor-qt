@@ -18,7 +18,7 @@ TraceWindow::TraceWindow(QWidget *parent, CanHub &canHub) :
     ui->tableView->setModel(m_model);
 
     m_canHandle = canHub.getNewHandle();
-    connect(m_canHandle, SIGNAL(received(can_message_t)), this, SLOT(messageReceived(can_message_t)));
+    connect(m_canHandle, &CanHandle::received, this, &TraceWindow::messageReceived);
 
 }
 

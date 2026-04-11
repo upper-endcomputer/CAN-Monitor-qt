@@ -8,9 +8,9 @@ TritiumSimulatorWindow::TritiumSimulatorWindow(QWidget *parent, CanHub &canHub) 
     ui->setupUi(this);
 
     m_canHandle = canHub.getNewHandle();
-    connect(m_canHandle, SIGNAL(received(can_message_t)), this, SLOT(messageReceived(can_message_t)));
+    connect(m_canHandle, &CanHandle::received, this, &TritiumSimulatorWindow::messageReceived);
 
-    connect(&m_tickTimer, SIGNAL(timeout()), this, SLOT(tickTimerTimeout()));
+    connect(&m_tickTimer, &QTimer::timeout, this, &TritiumSimulatorWindow::tickTimerTimeout);
     m_tickTimer.start(1000);
 }
 

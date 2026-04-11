@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     ui->treeView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->treeView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(onCustomContextMenu(const QPoint &)));
+    connect(ui->treeView, &QWidget::customContextMenuRequested, this, &MainWindow::onCustomContextMenu);
 
     ui->treeView->setColumnWidth(0,150);
     ui->treeView->setColumnWidth(2,50);
@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->treeView->setColumnWidth(5,200);
     ui->treeView->setColumnWidth(6,220);
     ui->treeView->header()->setSectionsClickable(true);
-    connect(ui->treeView->header(), SIGNAL(sectionClicked(int)), this, SLOT(headerSectionClicked(int)));
+    connect(ui->treeView->header(), &QHeaderView::sectionClicked, this, &MainWindow::headerSectionClicked);
 
     QString adapterName = QSettings().value("main/CanAdapter").toString();
     ui->canAdapterComboBox->addItems(CanAdapterFactory::getAdapterNames());
@@ -63,8 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_guiCanHandle = m_canHub.getNewHandle();
 
-    connect(ui->transmitWidget, SIGNAL(onTransmit(can_message_t)), this, SLOT(canTransmit(can_message_t)));
-    connect(m_guiCanHandle, SIGNAL(received(can_message_t)), m_model, SLOT(inputMessage(can_message_t)));
+    connect(ui->transmitWidget, &TransmitWidget::onTransmit, this, &MainWindow::canTransmit);
+    connect(m_guiCanHandle, &CanHandle::received, m_model, &CanTreeModel::inputMessage);
 
     populateCommanders();
 }
@@ -128,7 +128,7 @@ void MainWindow::headerSectionClicked(int index)
     switch(m_nextSortMode)
     {
     case sortNone:
-        ui->treeView->sortByColumn(-1);
+        ui->treeView->sortByColumn(-1, Qt::AscendingOrder);
         m_nextSortMode = sortAscending;
         break;
     case sortAscending:
@@ -321,7 +321,7 @@ void MainWindow::populateCommanders()
             it.next();
             QAction *action = new QAction(it.fileInfo().baseName(), this);
             ui->menuCommander->addAction(action);
-            connect(action, SIGNAL(triggered(bool)), this, SLOT(actionCommanderTriggered()));
+            connect(action, &QAction::triggered, this, &MainWindow::actionCommanderTriggered);
         }
     }
     ui->menuCommander->addSeparator();
@@ -339,7 +339,7 @@ void MainWindow::commanderWindowClosed(QObject* o)
 void MainWindow::openCommander(QString name)
 {
     auto dlg = new CommanderDialog(this, &m_canHub, name);
-    connect(dlg, SIGNAL(destroyed(QObject*)), this, SLOT(commanderWindowClosed(QObject*)));
+    connect(dlg, &QObject::destroyed, this, &MainWindow::commanderWindowClosed);
     m_openCommanders.append(dlg);
     dlg->show();
 }
@@ -352,7 +352,7 @@ void MainWindow::actionCommanderTriggered()
 void MainWindow::on_actionSetCommanderDirectory_triggered()
 {
     QString dir = QSettings().value("commanders/path").toString();
-    QString newDir = QFileDialog::getExistingDirectory (this, "Select Commanders Directory", dir, 0);
+    QString newDir = QFileDialog::getExistingDirectory(this, "Select Commanders Directory", dir, QFileDialog::Options());
     if(newDir != "")
     {
         QSettings().setValue("commanders/path", newDir);

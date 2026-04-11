@@ -10,7 +10,7 @@ Cansole::Cansole(QObject * parent, CanHub &canHub, int cansoleId)
     : QObject(parent), m_cansoleId(cansoleId)
 {
     m_canHandle = canHub.getNewHandle();
-    connect(m_canHandle, SIGNAL(received(can_message_t)), this, SLOT(messageReceived(can_message_t)));
+    connect(m_canHandle, &CanHandle::received, this, &Cansole::messageReceived);
 
     // TCP Server that putty connects to
     m_tcpServer = new QTcpServer();
@@ -20,7 +20,7 @@ Cansole::Cansole(QObject * parent, CanHub &canHub, int cansoleId)
     // Start Putty telnet
     m_puttyProcess = new QProcess(this);
     QString cmd = QString("putty -telnet -P %1 localhost").arg(m_tcpServer->serverPort());
-    connect(m_puttyProcess, SIGNAL(finished(int)), this, SLOT(deleteLater()));
+    connect(m_puttyProcess, qOverload<int, QProcess::ExitStatus>(&QProcess::finished), this, &QObject::deleteLater);
     m_puttyProcess->start(cmd);
     m_puttyProcess->waitForStarted();
 
@@ -89,7 +89,7 @@ void Cansole::clientConected()
 {
     m_tcpSocket = m_tcpServer->nextPendingConnection();
     connect(m_tcpSocket, &QAbstractSocket::disconnected, this, &QObject::deleteLater);
-    connect(m_tcpSocket, SIGNAL(readyRead()), this, SLOT(socketReadyRead()));
+    connect(m_tcpSocket, &QIODevice::readyRead, this, &Cansole::socketReadyRead);
 
     QByteArray data;
 
@@ -99,7 +99,7 @@ void Cansole::clientConected()
     data.append("\xFF\xFC\x22"); // Telnet IAC WONT LINEMODE
 
     // Set window title
-    data.append(QString().sprintf("\033]0;" "Cansole %X" "\007", m_cansoleId));
+    data.append(QString("\033]0;Cansole %1\007").arg(m_cansoleId, 0, 16).toUpper().toUtf8());
 
     m_tcpSocket->write(data);
 

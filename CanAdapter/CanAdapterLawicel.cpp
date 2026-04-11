@@ -10,9 +10,9 @@ CanAdapterLawicel::CanAdapterLawicel(CanHub &canHub)
 {
     m_canHandle = canHub.getNewHandle(CanHub::f_isCanAdapter);
 
-    connect(m_canHandle, SIGNAL(received(can_message_t)), this, SLOT(transmit(can_message_t)));
-    connect(&m_openTimer, SIGNAL(timeout()), this, SLOT(openTimerTimeout()));
-    connect(&m_port, SIGNAL(readyRead()), this, SLOT(readBytesReady()) );
+    connect(m_canHandle, &CanHandle::received, this, &CanAdapterLawicel::transmit);
+    connect(&m_openTimer, &QTimer::timeout, this, &CanAdapterLawicel::openTimerTimeout);
+    connect(&m_port, &QIODevice::readyRead, this, &CanAdapterLawicel::readBytesReady);
 }
 
 CanAdapterLawicel::~CanAdapterLawicel(){
@@ -130,9 +130,9 @@ bool CanAdapterLawicel::isOpen()
 
 QWidget * CanAdapterLawicel::getControlWidget(QWidget *parent){
     auto controlWidget = new SlcanControlWidget(parent);
-    connect(controlWidget, SIGNAL(openClicked(QString, CanAdapterLawicel::OpenMode, int)), this, SLOT(openClicked(QString, CanAdapterLawicel::OpenMode, int)));
-    connect(controlWidget, SIGNAL(closeClicked()), this, SLOT(closeClicked()));
-    connect(this, SIGNAL(openOperationEnded(bool)), controlWidget, SLOT(openOperationEnded(bool)));
+    connect(controlWidget, &SlcanControlWidget::openClicked, this, &CanAdapterLawicel::openClicked);
+    connect(controlWidget, &SlcanControlWidget::closeClicked, this, &CanAdapterLawicel::closeClicked);
+    connect(this, &CanAdapterLawicel::openOperationEnded, controlWidget, &SlcanControlWidget::openOperationEnded);
 
     return controlWidget;
 }

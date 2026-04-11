@@ -15,7 +15,7 @@ static CustomLineEdit * addField(QHBoxLayout * hb, const QString &label, int min
     le->setText(str);
     le->setFont(font);
 
-    int charWidth = le->fontMetrics().width("DDDDDDDD", maxStringLen-1);
+    int charWidth = le->fontMetrics().horizontalAdvance("DDDDDDDD", maxStringLen-1);
     //int frameSize = le->minimumSizeHint().width();
     le->setFixedWidth(30 + charWidth);
 
@@ -42,7 +42,7 @@ TransmitWidget::TransmitWidget(QWidget *parent) :
     ui->messageHorizontalLayout->addSpacing(20);
     for(int i=0; i<8; i++)
     {
-        auto name = QString().sprintf("D %d",i);
+        auto name = QString("D %1").arg(i);
         m_dataEdits.append(addField(ui->messageHorizontalLayout, name, 0, 0xff, "00", 2));
     }
     ui->messageHorizontalLayout->addStretch(100);

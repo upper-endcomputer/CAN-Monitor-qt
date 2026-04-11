@@ -47,13 +47,13 @@ CommanderDialog::CommanderDialog(QWidget *parent, CanHub * canHub, QString name)
     setWindowTitle(m_name);
 
     m_canHandle = canHub->getNewHandle();
-    connect(m_canHandle, SIGNAL(received(can_message_t)), this, SLOT(onCanReceived(can_message_t)));
+    connect(m_canHandle, &CanHandle::received, this, &CommanderDialog::onCanReceived);
 
-    connect(m_model, SIGNAL(newValueEdited(ParameterTreeNode*)), this, SLOT(newValueEdited(ParameterTreeNode*)));
+    connect(m_model, &ParameterTreeModel::newValueEdited, this, &CommanderDialog::newValueEdited);
 
-    connect(ui->treeView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(onTreeViewContextMenu(const QPoint &)));
+    connect(ui->treeView, &QWidget::customContextMenuRequested, this, &CommanderDialog::onTreeViewContextMenu);
 
-    connect(ui->customButtonGroupbox, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(onButtonContextMenu(const QPoint &)));
+    connect(ui->customButtonGroupbox, &QWidget::customContextMenuRequested, this, &CommanderDialog::onButtonContextMenu);
 }
 
 CommanderDialog::~CommanderDialog()
@@ -132,7 +132,7 @@ void CommanderDialog::insertButton(int index, CommanderButtonData d)
     b.button = new QPushButton(b.d.text);
     m_commanderButtons.insert(index, b);
     ui->customButtonVerticalLayout->insertWidget(index, b.button);
-    connect(b.button, SIGNAL(clicked(bool)), this, SLOT(onCommanderButtonClicked()));
+    connect(b.button, &QPushButton::clicked, this, &CommanderDialog::onCommanderButtonClicked);
 }
 
 void CommanderDialog::on_actionAddButton_triggered()

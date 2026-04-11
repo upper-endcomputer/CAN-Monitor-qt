@@ -69,7 +69,7 @@ Qt::ItemFlags CanTreeModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return Qt::ItemIsDropEnabled;
 
-    Qt::ItemFlags flags = 0;
+    Qt::ItemFlags flags;
     switch(m_columnFunctions.at(index.column()).df){
     case dfName:
     case dfFormat:

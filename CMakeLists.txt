@@ -5,7 +5,7 @@ project(CAN_Monitor_qt LANGUAGES CXX C)
 message(STATUS "Project: ${PROJECT_NAME}")
 
 # Qt
-find_package(Qt5 REQUIRED COMPONENTS
+find_package(Qt6 REQUIRED COMPONENTS
     Core
     Gui
     Widgets
@@ -197,11 +197,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 # Link Qt libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    Qt5::Core
-    Qt5::Gui
-    Qt5::Widgets
-    Qt5::Network
-    Qt5::SerialPort
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Network
+    Qt6::SerialPort
 )
 
 # Link local libPCBUSB if present in project root and bundle it on macOS

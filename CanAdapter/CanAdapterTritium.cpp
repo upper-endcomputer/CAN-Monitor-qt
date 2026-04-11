@@ -1,11 +1,11 @@
 #include "CanAdapterTritium.h"
 
 #include "lib-slcan/slcan.h"
-#include "SlcanControlWidget.h"
+#include "CanHub/CanHub.h"
 #include <QDebug>
 #include <QCoreApplication>
-#include <QTime>
 #include <QNetworkInterface>
+#include <QRandomGenerator>
 #include "TritiumControlWidget.h"
 
 // Implements the Tritium Ethernet to CAN bridge used for their
@@ -21,12 +21,12 @@ CanAdapterTritium::CanAdapterTritium(CanHub &canHub)
     generateClientIdentifier();
 
     m_statusTimer.setSingleShot(true);
-    connect(&m_statusTimer, SIGNAL(timeout()), this, SLOT(statusTimerTimeout()));
+    connect(&m_statusTimer, &QTimer::timeout, this, &CanAdapterTritium::statusTimerTimeout);
     m_statusTimer.start(2000);
 
-    connect(m_canHandle, SIGNAL(received(can_message_t)), this, SLOT(transmit(can_message_t)));
+    connect(m_canHandle, &CanHandle::received, this, &CanAdapterTritium::transmit);
 
-    connect(&m_udpSocket, SIGNAL(readyRead()), this, SLOT(processDatagrams()));
+    connect(&m_udpSocket, &QIODevice::readyRead, this, &CanAdapterTritium::processDatagrams);
 
     if(!m_udpSocket.bind(QHostAddress::AnyIPv4, m_port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
     {
@@ -51,9 +51,8 @@ CanAdapterTritium::~CanAdapterTritium(){
 
 void CanAdapterTritium::generateClientIdentifier()
 {
-    qsrand(QTime::currentTime().msec());
     for(int i=0; i<7; i++)
-        m_clientIdentifier[i] = qrand();
+        m_clientIdentifier[i] = static_cast<char>(QRandomGenerator::global()->bounded(256));
 }
 
 struct TritiumHeader
@@ -203,9 +202,9 @@ void CanAdapterTritium::transmit(can_message_t cmsg)
 
 QWidget * CanAdapterTritium::getControlWidget(QWidget *parent){
     auto w = new TritiumControlWidget(parent);
-    connect(w, SIGNAL(openClicked()), this, SLOT(openClicked()));
-    connect(w, SIGNAL(closeClicked()), this, SLOT(closeClicked()));
-    connect(this, SIGNAL(updateStatus(QString)), w, SLOT(displayStatus(QString)));
+    connect(w, &TritiumControlWidget::openClicked, this, &CanAdapterTritium::openClicked);
+    connect(w, &TritiumControlWidget::closeClicked, this, &CanAdapterTritium::closeClicked);
+    connect(this, &CanAdapterTritium::updateStatus, w, &TritiumControlWidget::displayStatus);
     return w;
 }
 

@@ -104,7 +104,7 @@ bool MessageTreeNode::setData(dataFunction df, const QVariant &value)
 void MessageTreeNode::writeDataToXml(QXmlStreamWriter &writer) const
 {
     writer.writeAttribute("name", m_name);
-    writer.writeAttribute("id", QString().sprintf("%X", id));
+    writer.writeAttribute("id", QString::number(id, 16).toUpper());
     writer.writeAttribute("IDE", IDE ? "true":"false");
     writer.writeAttribute("RTR", RTR ? "true":"false");
     writer.writeAttribute("format", m_formatString);

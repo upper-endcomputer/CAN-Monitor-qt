@@ -106,8 +106,8 @@ CanAdapterPCAN::CanAdapterPCAN(CanHub &canHub)
         return;
     }
 
-    connect(m_canHandle, SIGNAL(received(can_message_t)), this, SLOT(transmit(can_message_t)));
-    connect(&m_tickTimer, SIGNAL(timeout()), this, SLOT(tickTimerTimeout()));
+    connect(m_canHandle, &CanHandle::received, this, &CanAdapterPCAN::transmit);
+    connect(&m_tickTimer, &QTimer::timeout, this, &CanAdapterPCAN::tickTimerTimeout);
     m_tickTimer.setInterval(10);
 }
 
@@ -218,9 +218,9 @@ bool CanAdapterPCAN::isOpen()
 
 QWidget * CanAdapterPCAN::getControlWidget(QWidget *parent){
     auto controlWidget = new PcanControlWidget(parent);
-    connect(controlWidget, SIGNAL(openClicked(QString, CanAdapterPCAN::OpenMode, int)), this, SLOT(openClicked(QString, CanAdapterPCAN::OpenMode, int)));
-    connect(controlWidget, SIGNAL(closeClicked()), this, SLOT(closeClicked()));
-    connect(this, SIGNAL(openOperationEnded(bool)), controlWidget, SLOT(openOperationEnded(bool)));
+    connect(controlWidget, &PcanControlWidget::openClicked, this, &CanAdapterPCAN::openClicked);
+    connect(controlWidget, &PcanControlWidget::closeClicked, this, &CanAdapterPCAN::closeClicked);
+    connect(this, &CanAdapterPCAN::openOperationEnded, controlWidget, &PcanControlWidget::openOperationEnded);
 
     return controlWidget;
 }

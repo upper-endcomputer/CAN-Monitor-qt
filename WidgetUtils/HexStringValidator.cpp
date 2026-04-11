@@ -4,20 +4,20 @@
 HexStringValidator::HexStringValidator(uint32_t minimum, uint32_t maximum)
     : QValidator(), m_minimum(minimum), m_maximum(maximum)
 {
-    m_maxLen = QString().sprintf("%X", m_maximum).length();
+    m_maxLen = QString::number(m_maximum, 16).toUpper().length();
 }
 
 void HexStringValidator::fixup(QString &input) const
 {
     if(input.length() == 0)
-        input = QString().sprintf("%X", m_minimum);
+        input = QString::number(m_minimum, 16).toUpper();
 
     if(input.length() > m_maxLen)
         input.remove(0, input.length() - m_maxLen);
 
     uint32_t num = input.toUInt(0, 16);
     if(num > m_maximum)
-        input = QString().sprintf("%X", m_maximum);
+        input = QString::number(m_maximum, 16).toUpper();
 
     while(input.length() < m_maxLen)
         input.prepend('0');

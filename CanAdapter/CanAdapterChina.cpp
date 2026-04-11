@@ -9,9 +9,9 @@ CanAdapterChina::CanAdapterChina(CanHub &canHub)
 {
     m_canHandle = canHub.getNewHandle(CanHub::f_isCanAdapter);
 
-    connect(m_canHandle, SIGNAL(received(can_message_t)), this, SLOT(transmit(can_message_t)));
-    connect(&m_openTimer, SIGNAL(timeout()), this, SLOT(openTimerTimeout()));
-    connect(&m_port, SIGNAL(readyRead()), this, SLOT(readBytesReady()) );
+    connect(m_canHandle, &CanHandle::received, this, &CanAdapterChina::transmit);
+    connect(&m_openTimer, &QTimer::timeout, this, &CanAdapterChina::openTimerTimeout);
+    connect(&m_port, &QIODevice::readyRead, this, &CanAdapterChina::readBytesReady);
 }
 
 CanAdapterChina::~CanAdapterChina(){
@@ -257,9 +257,9 @@ bool CanAdapterChina::isOpen()
 
 QWidget * CanAdapterChina::getControlWidget(QWidget *parent){
     auto controlWidget = new ChinaControlWidget(parent);
-    connect(controlWidget, SIGNAL(openClicked(QString, CanAdapterChina::OpenMode, int)), this, SLOT(openClicked(QString, CanAdapterChina::OpenMode, int)));
-    connect(controlWidget, SIGNAL(closeClicked()), this, SLOT(closeClicked()));
-    connect(this, SIGNAL(openOperationEnded(bool)), controlWidget, SLOT(openOperationEnded(bool)));
+    connect(controlWidget, &ChinaControlWidget::openClicked, this, &CanAdapterChina::openClicked);
+    connect(controlWidget, &ChinaControlWidget::closeClicked, this, &CanAdapterChina::closeClicked);
+    connect(this, &CanAdapterChina::openOperationEnded, controlWidget, &ChinaControlWidget::openOperationEnded);
 
     return controlWidget;
 }

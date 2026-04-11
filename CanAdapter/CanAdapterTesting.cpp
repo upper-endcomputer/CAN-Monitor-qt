@@ -1,6 +1,7 @@
 #include "CanAdapterTesting.h"
 #include "TestingControlWidget.h"
 #include <QCoreApplication>
+#include <QRandomGenerator>
 
 CanAdapterTesting::CanAdapterTesting(CanHub &canHub)
     : PollingCanAdapter(canHub)
@@ -31,7 +32,7 @@ static void randomFillCanMessage(can_message_t * cmsg)
     uint8_t * x = (uint8_t*)cmsg;
 
     for(unsigned int i=0; i < sizeof(can_message_t); i++)
-        x[i] = qrand();
+        x[i] = static_cast<uint8_t>(QRandomGenerator::global()->bounded(256));
 }
 
 bool CanAdapterTesting::receive(can_message_t * cmsg)
@@ -72,7 +73,7 @@ bool CanAdapterTesting::isOpen()
 QWidget * CanAdapterTesting::getControlWidget(QWidget *parent)
 {
     auto controlWidget = new TestingControlWidget(parent);
-    connect(this, SIGNAL(updateMessagesPerSecond(QString)), controlWidget, SLOT(updateMessagesPerSecond(QString)));
+    connect(this, &CanAdapterTesting::updateMessagesPerSecond, controlWidget, &TestingControlWidget::updateMessagesPerSecond);
 
     return controlWidget;
 }

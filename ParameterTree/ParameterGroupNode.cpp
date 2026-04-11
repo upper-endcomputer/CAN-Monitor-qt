@@ -40,7 +40,7 @@ Qt::ItemFlags ParameterGroupNode::getFlags(parameterColumnFunction pcf, bool edi
     if(pcf == pcf_name && editMode)
         return Qt::ItemIsEditable;
 
-    return 0;
+    return Qt::ItemFlags();
 }
 
 void ParameterGroupNode::writeDataToXml(QXmlStreamWriter &writer) const

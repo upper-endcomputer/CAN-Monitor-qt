@@ -9,9 +9,9 @@ QString generateIdString(int id, bool IDE, bool RTR)
     if(IDE || RTR) idString += " ";
 
     if(IDE)
-        idString += QString().sprintf("%08X", id);
+        idString += QString("%1").arg(id, 8, 16, QLatin1Char('0')).toUpper();
     else
-        idString += QString().sprintf("%03X", id);
+        idString += QString("%1").arg(id, 3, 16, QLatin1Char('0')).toUpper();
 
     return idString;
 }
@@ -26,7 +26,7 @@ QString generateDataString(const can_message_t * cmsg)
 {
     QString dataString;
     if(!cmsg->RTR) for(int i=0; i<cmsg->dlc; i++){
-        dataString += QString().sprintf("%02X ", cmsg->data[i]);
+        dataString += QString("%1 ").arg(cmsg->data[i], 2, 16, QLatin1Char('0')).toUpper();
     }
     return dataString;
 }
